@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/placeCard"
@@ -109,7 +110,8 @@
                     android:text="@string/button_like"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/colorPrimaryDark"
-                    android:layout_marginLeft="4dp" />
+                    android:layout_marginLeft="4dp"
+                    android:focusable="false" />
 
                 <Button
                     android:id="@+id/replyBtn"

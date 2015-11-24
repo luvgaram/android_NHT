@@ -1,6 +1,7 @@
 package org.nhnnext.nearhoneytip.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -40,20 +42,41 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         TipItem tipItem = tipitems.get(position);
+
+        holder._id = tipItem.get_id();
         holder.placeStoreName.setText(tipItem.getStorename());
         holder.placeTipDetail.setText(tipItem.getTipdetail());
         holder.placeNickName.setText(tipItem.getNickname());
         holder.placeDate.setText(tipItem.getDate());
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("tip adapter", Integer.toString(v.getId()));
+            }
+        });
 
+        holder.likeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("tip adapter", Integer.toString(v.getId()));
+            }
+        });
+
+        holder.replyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("tip adapter", Integer.toString(v.getId()));
+            }
+        });
         // set images
         setPhotoImage(holder, tipItem);
         setIconImage(holder, tipItem);
+
+
     }
 
     private void setPhotoImage(ViewHolder holder, TipItem tipItem) {
-//        PhotoFile firstPhoto = tipItem.getFile()[0];
-//        String imagePath = firstPhoto.getPath();
 
         String imagePath = tipItem.getFile()[0].getPath();
 
@@ -88,6 +111,8 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        public String _id;
+        public CardView placeCard;
         public TextView placeStoreName;
         public ImageView placeImageView;
         public TextView placeTipDetail;
@@ -109,6 +134,5 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
             likeBtn = (Button)itemView.findViewById(R.id.likeBtn);
             replyBtn = (Button)itemView.findViewById(R.id.replyBtn);
         }
-
     }
 }
