@@ -105,14 +105,6 @@ public class TipItem {
         this.profilephoto = profilephoto;
     }
 
-//    public File getUploadedphoto() {
-//        return uploadedphoto;
-//    }
-//
-//    public void setUploadedphoto(File uploadedphoto) {
-//        this.uploadedphoto = uploadedphoto;
-//    }
-
     public String getDate() {
         return date;
     }
