@@ -40,36 +40,30 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
-        Log.d("imageAdapter-position:", position + "");
         
         cursor.moveToPosition(position);
-
-        Log.d("columnIndex: ", cursor.getString(cursor.getColumnIndex(MediaStore.Images.Thumbnails._ID)));
-
         Uri imageUri = Uri.withAppendedPath(
                 MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
                 cursor.getString(cursor.getColumnIndex(MediaStore.Images.Thumbnails._ID)));
 
+        // TODO rotate thumbnails
         Picasso.with(context)
                 .load(imageUri)
                 .into(holder.placeImageView);
 
-        final String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA));
+        final int imageId = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Thumbnails.IMAGE_ID)));
+
 
         holder.placeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("placeImageView", path);
-                onPhotoSelectedListener.onPhotoSelected(path);
+                onPhotoSelectedListener.onPhotoSelected(imageId);
             }
         });
-
     }
 
     @Override
     public int getItemCount() {
-        Log.d("imageAdapter-getCount:", cursor.getCount() + "");
         return cursor.getCount();
     }
 

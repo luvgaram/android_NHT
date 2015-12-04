@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">NearHoneyTip</string>
     <string name="action_settings">Settings</string>
+    <string name="action_save">Save</string>
     <string name="button_like">좋아요</string>
     <string name="button_reply">댓글</string>
     <string name="title_activity_writing">New Honey Tip</string>

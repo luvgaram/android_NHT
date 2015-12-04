@@ -1,8 +1,8 @@
 package org.nhnnext.nearhoneytip;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import org.nhnnext.nearhoneytip.adapter.ImageListAdapter;
 
+@SuppressLint("ValidFragment")
 public class ImagePickFragment extends Fragment implements OnPhotoSelectedListener {
 
     private View view;
@@ -25,9 +26,8 @@ public class ImagePickFragment extends Fragment implements OnPhotoSelectedListen
     private OnHidePhotoListListener onHidePhotoListListener;
 
     public interface OnHidePhotoListListener {
-        void onHidePhotoList(String path);
+        void onHidePhotoList(int path);
     }
-
 
     public ImagePickFragment(OnHidePhotoListListener onHidePhotoListListener) {
         this.onHidePhotoListListener = onHidePhotoListListener;
@@ -36,7 +36,7 @@ public class ImagePickFragment extends Fragment implements OnPhotoSelectedListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_writing, container, false);
+        view = inflater.inflate(R.layout.fragment_image_pick, container, false);
         return view;
     }
 
@@ -56,9 +56,9 @@ public class ImagePickFragment extends Fragment implements OnPhotoSelectedListen
     }
 
     @Override
-    public void onPhotoSelected(String path) {
-        Log.i("ImageFragment: ", path);
-        onHidePhotoListListener.onHidePhotoList(path);
+    public void onPhotoSelected(int imageID) {
+        Log.i("ImageFragment: ", imageID + "");
+        onHidePhotoListListener.onHidePhotoList(imageID);
     }
 }
 

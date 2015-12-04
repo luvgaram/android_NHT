@@ -1,10 +1,8 @@
 package org.nhnnext.nearhoneytip;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -28,16 +26,12 @@ import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Context context;
-    private RecyclerView recyclerView;
-    private StaggeredGridLayoutManager staggeredLayoutManager;
     private TipListAdapter tipListAdapter;
     private List<TipItem> tipItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = getApplicationContext();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
 
                 Intent intent = new Intent(MainActivity.this, WritingActivity.class);
                 startActivity(intent);
@@ -64,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
     private void setTipList() {
         tipItems = new ArrayList<>();
         tipListAdapter = new TipListAdapter(this, tipItems);
-        recyclerView = (RecyclerView) findViewById(R.id.tiplist);
-        staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.tiplist);
+        StaggeredGridLayoutManager staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredLayoutManager);
         recyclerView.setAdapter(tipListAdapter);
 
@@ -99,11 +91,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
 }
