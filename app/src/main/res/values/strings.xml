@@ -3,4 +3,10 @@
     <string name="action_settings">Settings</string>
     <string name="button_like">좋아요</string>
     <string name="button_reply">댓글</string>
+    <string name="title_activity_writing">New Honey Tip</string>
+    <string name="storename_hint">상점명 </string>
+    <string name="tipdetail_hint">팁 내용을 적어주세요. </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

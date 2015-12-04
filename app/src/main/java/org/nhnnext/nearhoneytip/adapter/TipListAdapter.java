@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -72,8 +71,6 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
         // set images
         setPhotoImage(holder, tipItem);
         setIconImage(holder, tipItem);
-
-
     }
 
     private void setPhotoImage(ViewHolder holder, TipItem tipItem) {
@@ -112,7 +109,6 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public String _id;
-        public CardView placeCard;
         public TextView placeStoreName;
         public ImageView placeImageView;
         public TextView placeTipDetail;
