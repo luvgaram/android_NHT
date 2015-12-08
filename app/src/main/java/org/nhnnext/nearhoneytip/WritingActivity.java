@@ -2,12 +2,14 @@ package org.nhnnext.nearhoneytip;
 
 
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,12 +18,16 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.EditText;
 
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.nhnnext.nearhoneytip.remote.RemoteService;
 import org.nhnnext.nearhoneytip.remote.ServiceGenerator;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -96,22 +102,21 @@ public class WritingActivity extends AppCompatActivity implements ImagePickFragm
         int id = item.getItemId();
 
         if (id == R.id.action_save) {
-            setNewTip();
+            postNewTip();
         }
 
         return id == R.id.action_save || super.onOptionsItemSelected(item);
     }
 
-    private void setNewTip() {
+    private void postNewTip() {
 
         if (isPhotoSelected && storeName.getText() != null) {
 
-            String actualPath = getRealPathFromUri(imageUri);
+            File newFile = setPhotoFile();
 
-            Log.d("actualPath: ", actualPath);
+            TypedFile typedFile = new TypedFile("multipart/form-data", newFile);
+//            TypedFile typedFile = new TypedFile("multipart/form-data", new File(actualPath));
 
-            // TODO resize photo
-            TypedFile typedFile = new TypedFile("multipart/form-data", new File(actualPath));
 
             RemoteService remoteService = ServiceGenerator.createService(RemoteService.class, RemoteService.BASE_URL);
             remoteService.postTip(typedFile, storeName.getText().toString(), tipDetail.getText().toString(), new Callback<String>() {
@@ -131,7 +136,59 @@ public class WritingActivity extends AppCompatActivity implements ImagePickFragm
         }
     }
 
-    public String getRealPathFromUri(Uri contentUri) {
+    @NonNull
+    private File setPhotoFile() {
+        String actualPath = getRealPathFromUri(imageUri);
+
+        Log.d("actualPath: ", actualPath);
+
+        ImageView selectedPhoto = (ImageView) findViewById(R.id.selectedphoto);
+        Bitmap bitmap = ((BitmapDrawable)selectedPhoto.getDrawable()).getBitmap();
+//        File newFile = new File(getApplicationContext().getCacheDir(), "uploadfile");
+//        Bitmap bitmap = setPhotoSize(actualPath, selectedPhoto);
+
+        File newFile = new File(actualPath);
+
+        try {
+            newFile.createNewFile();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 50, bos);
+
+            FileOutputStream fos = new FileOutputStream(newFile);
+            fos.write(bos.toByteArray());
+            fos.flush();
+            fos.close();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } return newFile;
+    }
+
+
+    private Bitmap setPhotoSize(String imagePath, ImageView destination) {
+        int targetW = destination.getWidth();
+        int targetH = destination.getHeight();
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imagePath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        Log.d("writing: ", "targetW: " + targetW + ", targetH: " + targetH + ", photoW: " + photoW + ", photoH: " + photoH);
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        return BitmapFactory.decodeFile(imagePath, bmOptions);
+    }
+
+    private String getRealPathFromUri(Uri contentUri) {
         Cursor cursor = null;
         try {
             cursor = getApplicationContext().getContentResolver().query(

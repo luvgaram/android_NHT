@@ -49,6 +49,8 @@ public class ImageViewFragment extends Fragment {
 
                 Picasso.with(getActivity())
                         .load(imageUri)
+                        .fit() // measuring ImageView and reduce the image size to the dimensions of the ImageView
+                        .centerCrop()
                         .into(selectedPhoto);
 
     }

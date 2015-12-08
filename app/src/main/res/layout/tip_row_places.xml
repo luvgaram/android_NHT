@@ -34,14 +34,15 @@
             <TextView
                 android:id="@+id/placeStoreName"
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
+                android:layout_height="24dp"
                 android:layout_gravity="top"
                 android:gravity="left"
                 android:paddingLeft="4dp"
-                android:text="test"
+                android:text="@string/temp"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/black"
-                android:textSize="18dp" />
+                android:textSize="18dp"
+                android:ellipsize="end" />
 
             <TextView
                 android:id="@+id/placeTipDetail"
@@ -52,10 +53,11 @@
                 android:layout_gravity="top"
                 android:gravity="left"
                 android:paddingLeft="4dp"
-                android:text="test"
+                android:text="@string/temp"
                 android:textAppearance="?android:attr/textAppearance"
                 android:textColor="@android:color/black"
-                android:textSize="14dp" />
+                android:textSize="14dp"
+                android:ellipsize="end" />
 
             <ImageView
                 android:id="@+id/placeProfilePhoto"
@@ -74,7 +76,7 @@
                 android:layout_toEndOf="@+id/placeProfilePhoto"
                 android:gravity="left"
                 android:paddingLeft="4dp"
-                android:text="test"
+                android:text="@string/temp"
                 android:textAppearance="?android:attr/textAppearance"
                 android:textColor="@android:color/black"
                 android:textSize="12dp" />
@@ -82,13 +84,13 @@
             <TextView
                 android:id="@+id/placeDate"
                 android:layout_width="match_parent"
-                android:layout_height="24dp"
+                android:layout_height="16dp"
                 android:layout_below="@+id/placeNickName"
                 android:layout_gravity="top"
                 android:layout_toEndOf="@+id/placeProfilePhoto"
                 android:gravity="left"
                 android:paddingLeft="4dp"
-                android:text="test"
+                android:text="@string/temp"
                 android:textAppearance="?android:attr/textAppearance"
                 android:textColor="@android:color/black"
                 android:textSize="12dp" />
