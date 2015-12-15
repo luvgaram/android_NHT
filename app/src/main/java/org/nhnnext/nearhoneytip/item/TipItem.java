@@ -1,12 +1,17 @@
 package org.nhnnext.nearhoneytip.item;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.nhnnext.nearhoneytip.item.PhotoFile;
+
+import java.io.Serializable;
 
 /**
  * Created by eunjooim on 2015. 11. 10.
  */
-public class TipItem {
+public class TipItem implements Serializable {
 
 //    + _id - 팁 id
 //    + file - 이미지 배열
