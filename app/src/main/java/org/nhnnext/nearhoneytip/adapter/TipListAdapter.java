@@ -1,7 +1,7 @@
 package org.nhnnext.nearhoneytip.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,11 +11,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import org.nhnnext.nearhoneytip.R;
+import org.nhnnext.nearhoneytip.ViewTipDetailActivity;
 import org.nhnnext.nearhoneytip.item.TipItem;
-import org.nhnnext.nearhoneytip.remote.RemoteService;
+import org.nhnnext.nearhoneytip.library.ImageLib;
 
 import java.util.List;
 
@@ -25,11 +24,11 @@ import java.util.List;
 public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHolder> {
 
     Context context;
-    private List<TipItem> tipitems;
+    private List<TipItem> tipItems;
 
     public TipListAdapter(Context context, List<TipItem> tipItemList) {
         this.context = context;
-        this.tipitems = tipItemList;
+        this.tipItems = tipItemList;
     }
 
     @Override
@@ -39,76 +38,60 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        TipItem tipItem = tipitems.get(position);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        final TipItem tipItem = tipItems.get(position);
 
-        holder._id = tipItem.get_id();
-        holder.placeStoreName.setText(tipItem.getStorename());
-        holder.placeTipDetail.setText(tipItem.getTipdetail());
-        holder.placeNickName.setText(tipItem.getNickname());
-        holder.placeDate.setText(tipItem.getDate());
+//        holder._id = tipItem.get_id();
+
+        if (tipItem.getStorename() != null) holder.placeStoreName.setText(tipItem.getStorename());
+        if (tipItem.getTipdetail() != null) holder.placeTipDetail.setText(tipItem.getTipdetail());
+        if (tipItem.getNickname() != null) holder.placeNickName.setText(tipItem.getNickname());
+        if (tipItem.getDate() != null) holder.placeDate.setText(tipItem.getDate());
+
+        // set images
+        ImageLib imageLib = new ImageLib(context);
+
+        imageLib.setPhotoThumbnail(holder.placeImageView, tipItem);
+        imageLib.setIconImage(holder.placeProfilePhoto, tipItem);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i("tip adapter", Integer.toString(v.getId()));
+                startViewDetailActivity();
+            }
+
+            private void startViewDetailActivity() {
+                Intent intent = new Intent(context, ViewTipDetailActivity.class);
+                intent.putExtra("tipItem", tipItem);
+
+                context.startActivity(intent);
             }
         });
 
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("tip adapter", Integer.toString(v.getId()));
+                Log.i("tip adapter", "좋아요");
             }
         });
 
         holder.replyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("tip adapter", Integer.toString(v.getId()));
+                Log.i("tip adapter", "댓글");
             }
         });
-        // set images
-        setPhotoImage(holder, tipItem);
-        setIconImage(holder, tipItem);
     }
 
-    private void setPhotoImage(ViewHolder holder, TipItem tipItem) {
 
-        String imagePath = tipItem.getFile()[0].getPath();
-
-        if (imagePath != null) {
-            imagePath = imagePath.replaceAll("data/", "");
-
-            Picasso.with(context)
-                    .load(RemoteService.BASE_URL + "/image/photo=" + imagePath)
-                    .into(holder.placeImageView);
-        } else {
-            holder.placeImageView.setBackgroundResource(R.drawable.nht_logo);
-        }
-    }
-
-    private void setIconImage(ViewHolder holder, TipItem tipItem) {
-        String imagePath = tipItem.getProfilephoto();
-
-        if (imagePath != null) {
-            imagePath = imagePath.replaceAll("icon/", "");
-
-            Picasso.with(context)
-                    .load(RemoteService.BASE_URL + "/image/icon=" + imagePath)
-                    .into(holder.placeProfilePhoto);
-        } else {
-            holder.placeImageView.setBackgroundResource(R.drawable.nht_logo);
-        }
-    }
 
     @Override
     public int getItemCount() {
-        return tipitems.size();
+        return tipItems.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public String _id;
         public TextView placeStoreName;
         public ImageView placeImageView;
         public TextView placeTipDetail;

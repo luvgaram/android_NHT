@@ -1,14 +1,20 @@
 <resources>
     <string name="app_name">NearHoneyTip</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_save">Save</string>
+    <string name="action_settings">설정</string>
+    <string name="action_previous">뒤로</string>
+    <string name="action_cancel">취소</string>
+    <string name="action_next">다음</string>
+    <string name="action_save">저장</string>
     <string name="button_like">좋아요</string>
     <string name="button_reply">댓글</string>
-    <string name="title_activity_writing">New Honey Tip</string>
+    <string name="title_activity_writing_tip">New Honey Tip</string>
     <string name="storename_hint">상점명 </string>
     <string name="tipdetail_hint">팁 내용을 적어주세요. </string>
-    <string name="temp">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="temp">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_view_tip_detail">ViewTipDetailActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+
 </resources>

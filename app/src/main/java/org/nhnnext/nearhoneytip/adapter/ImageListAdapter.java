@@ -13,7 +13,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import org.nhnnext.nearhoneytip.OnPhotoSelectedListener;
+import org.nhnnext.nearhoneytip.listener.OnPhotoSelectedListener;
 import org.nhnnext.nearhoneytip.R;
 
 /**
@@ -42,22 +42,20 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         
         cursor.moveToPosition(position);
-        Uri imageUri = Uri.withAppendedPath(
-                MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
-                cursor.getString(cursor.getColumnIndex(MediaStore.Images.Thumbnails._ID)));
+        final Uri imageUri = Uri.withAppendedPath(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID)));
 
-        // TODO rotate thumbnails
         Picasso.with(context)
                 .load(imageUri)
+                .fit()
+                .centerCrop()
                 .into(holder.placeImageView);
-
-        final int imageId = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Thumbnails.IMAGE_ID)));
-
 
         holder.placeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onPhotoSelectedListener.onPhotoSelected(imageId);
+                onPhotoSelectedListener.onPhotoSelected(imageUri);
             }
         });
     }

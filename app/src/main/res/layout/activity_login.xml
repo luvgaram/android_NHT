@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="org.nhnnext.nearhoneytip.LoginActivity">
+
+
+    <ImageView
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:id="@+id/imageView"
+        android:background="@drawable/nht_logo"
+        android:layout_marginTop="140dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="140dp"
+        android:layout_height="60dp"
+        android:background="@drawable/nht_logo_eng"
+        android:layout_below="@+id/imageView"
+        android:layout_alignStart="@+id/imageView"
+        android:layout_marginTop="8dp"/>
+
+</RelativeLayout>
