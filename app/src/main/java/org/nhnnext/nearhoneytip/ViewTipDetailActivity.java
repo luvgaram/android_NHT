@@ -41,7 +41,7 @@ public class ViewTipDetailActivity extends AppCompatActivity {
         // set images
         ImageLib imageLib = new ImageLib(this);
 
-        imageLib.setPhotoImage(tipImage, tipItem);
-        imageLib.setIconImage(profilePhoto, tipItem);
+        imageLib.setPhotoImage(tipImage, tipItem.getFile()[0].getPath());
+        imageLib.setIconImage(profilePhoto, tipItem.getProfilephoto());
     }
 }
