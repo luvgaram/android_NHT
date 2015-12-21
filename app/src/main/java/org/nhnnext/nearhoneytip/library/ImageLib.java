@@ -38,9 +38,9 @@ public class ImageLib {
         }
     }
 
-    public void setPhotoImage(ImageView imageView, TipItem tipItem) {
+    public void setPhotoImage(ImageView imageView, String imagePath) {
 
-        String imagePath = tipItem.getFile()[0].getPath();
+//        String imagePath = tipItem.getFile()[0].getPath();
 
         if (imagePath != null) {
             imagePath = imagePath.replaceAll("data/", "");
@@ -49,20 +49,25 @@ public class ImageLib {
                     .load(RemoteService.BASE_URL + "/image/photo=" + imagePath)
                     .fit()
                     .centerInside()
+                    .placeholder(R.drawable.nht_logo)
                     .into(imageView);
         } else {
             imageView.setBackgroundResource(R.drawable.nht_logo);
         }
     }
 
-    public void setIconImage(ImageView imageView, TipItem tipItem) {
-        String imagePath = tipItem.getProfilephoto();
+    public void setIconImage(ImageView imageView, String imagePath) {
+//        String imagePath = tipItem.getProfilephoto();
 
         if (imagePath != null) {
             imagePath = imagePath.replaceAll("icon/", "");
 
             Picasso.with(context)
                     .load(RemoteService.BASE_URL + "/image/icon=" + imagePath)
+                    .fit()
+                    .centerCrop()
+                    .transform(new RoundedTransform())
+                    .placeholder(R.drawable.nht_logo)
                     .into(imageView);
         } else {
             imageView.setBackgroundResource(R.drawable.nht_logo);

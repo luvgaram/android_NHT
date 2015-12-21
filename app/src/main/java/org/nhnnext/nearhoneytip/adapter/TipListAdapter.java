@@ -52,7 +52,7 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
         ImageLib imageLib = new ImageLib(context);
 
         imageLib.setPhotoThumbnail(holder.placeImageView, tipItem);
-        imageLib.setIconImage(holder.placeProfilePhoto, tipItem);
+        imageLib.setIconImage(holder.placeProfilePhoto, tipItem.getProfilephoto());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +75,6 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
                 Log.i("tip adapter", "좋아요");
             }
         });
-
         holder.replyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,8 +82,6 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
             }
         });
     }
-
-
 
     @Override
     public int getItemCount() {

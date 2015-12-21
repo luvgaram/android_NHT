@@ -10,11 +10,18 @@
     <string name="title_activity_writing_tip">New Honey Tip</string>
     <string name="storename_hint">상점명 </string>
     <string name="tipdetail_hint">팁 내용을 적어주세요. </string>
+    <string name="drawer_profile">프로필 변경</string>
+    <string name="drawer_mytip">내 글 보기</string>
+    <string name="drawer_setting">설정하기</string>
     <string name="temp">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_view_tip_detail">ViewTipDetailActivity</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

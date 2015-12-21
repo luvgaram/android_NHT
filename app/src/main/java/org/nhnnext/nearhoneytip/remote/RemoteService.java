@@ -41,6 +41,9 @@ public interface RemoteService {
     @POST("/tip")
     void postTip(@Part("storename") String storename,
                  @Part("tipdetail") String tipdetail,
+                 @Part("uid") String uid,
+                 @Part("nickname") String nickname,
+                 @Part("profilephoto") String profilephoto,
                  @Part("upload") TypedFile file,
                  Callback<TipItem> callback);
 
@@ -52,5 +55,5 @@ public interface RemoteService {
     @Headers( "Content-Type: application/json" )
     @POST("/users")
     void postUser(@Body TypedString jsonBody,
-                  Callback<UserResult> callback);
+                  Callback<User> callback);
 }

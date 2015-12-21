@@ -2,12 +2,17 @@ package org.nhnnext.nearhoneytip;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -16,10 +21,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.nhnnext.nearhoneytip.adapter.TipListAdapter;
 import org.nhnnext.nearhoneytip.item.TipItem;
+import org.nhnnext.nearhoneytip.library.ImageLib;
 import org.nhnnext.nearhoneytip.remote.RemoteService;
 import org.nhnnext.nearhoneytip.remote.ServiceGenerator;
 
@@ -30,10 +38,12 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private TipListAdapter tipListAdapter;
     private List<TipItem> tipItems;
+    private String nickname;
+    private String profilephoto;
 
     public final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
     boolean isPermissionOk = false;
@@ -41,11 +51,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getPermission();
+        setFAB();
+        setDrawer(toolbar);
+    }
+
+    private void setFAB() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,8 +77,36 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getPermission() {
+    private void setDrawer(Toolbar toolbar) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        SharedPreferences pref = getSharedPreferences("login", MODE_PRIVATE);
+        nickname = pref.getString("nickname", "");
+        profilephoto = pref.getString("profilephoto", "");
+
+        setNavHeader(navigationView, nickname, profilephoto);
+    }
+
+    private void setNavHeader(NavigationView navigationView, String nickname, String profilPhoto) {
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView navNickName = (TextView) headerView.findViewById(R.id.nickName);
+        ImageView navProfile = (ImageView) headerView.findViewById(R.id.profilePhoto);
+
+        ImageLib imageLib = new ImageLib(this);
+
+        imageLib.setIconImage(navProfile, profilephoto);
+        navNickName.setText(nickname);
+    }
+
+    private void getPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -136,6 +179,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -152,5 +205,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_profile) {
+            // Handle the camera action
+        } else if (id == R.id.nav_mytip) {
+
+        } else if (id == R.id.nav_mytip) {
+
+        } else if (id == R.id.nav_setting) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

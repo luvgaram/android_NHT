@@ -51,13 +51,7 @@ public class LoginActivity extends AppCompatActivity {
 
             // check existence of uuid in SharedPreferences
             pref = getSharedPreferences("login", MODE_PRIVATE);
-            String prefUuid = pref.getString("uuid", "");
-
-            if (prefUuid.equals("")) {
-                editSharedPreferences(uuid);
-            } else {
-                Log.d("pref", prefUuid);
-            }
+            editSharedPreferences(uuid);
 
             Intent intent = new Intent(this, MainActivity.class);
             // TODO 서버 코드 여기다!
@@ -70,16 +64,14 @@ public class LoginActivity extends AppCompatActivity {
     private void editSharedPreferences(final String uuid) {
 
         remoteService = ServiceGenerator.createService(RemoteService.class, RemoteService.BASE_URL);
-        remoteService.getUser(uuid, new Callback<List<User>>() {
-            @Override
-            public void success(List<User> userList, Response response) {
-                Log.d("retrofit", "test success");
 
-                if (userList.isEmpty()) {
-                    createUser(uuid);
-                } else {
-                    putUserInPref(userList.get(0));
-                }
+        TypedString newUser = new TypedString("{" + "\"uid\":" + "\"" + uuid + "\"" + "}");
+        remoteService.postUser(newUser, new Callback<User>() {
+
+            @Override
+            public void success(User user, Response response) {
+                Log.d("retrofit", "test success");
+                putUserInPref(user);
             }
 
             @Override
@@ -87,6 +79,24 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("retrofit", "test failure");
             }
         });
+//
+//        remoteService.getUser(uuid, new Callback<List<User>>() {
+//            @Override
+//            public void success(List<User> userList, Response response) {
+//                Log.d("retrofit", "test success");
+//
+//                if (userList.isEmpty()) {
+//                    createUser(uuid);
+//                } else {
+//                    putUserInPref(userList.get(0));
+//                }
+//            }
+//
+//            @Override
+//            public void failure(RetrofitError error) {
+//                Log.d("retrofit", "test failure");
+//            }
+//        });
     }
 
     private void putUserInPref(User user) {
@@ -99,27 +109,27 @@ public class LoginActivity extends AppCompatActivity {
 
         Log.d("pref", pref.getString("nickname", ""));
     }
-
-    private void createUser(String uuid) {
-        // make a uid
-        TypedString newUser = new TypedString("{" + "\"uid\":" + "\"" + uuid + "\"" + "}");
-
-        Log.d("typedString: ", newUser.toString());
-
-        remoteService.postUser(newUser, new Callback<UserResult>() {
-
-            @Override
-            public void success(UserResult userResult, Response response) {
-                Log.d("retrofit", "test success");
-                putUserInPref(userResult.getOps()[0]);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("retrofit", "test failure");
-            }
-        });
-    }
+//
+//    private void createUser(String uuid) {
+//        // make a uid
+//        TypedString newUser = new TypedString("{" + "\"uid\":" + "\"" + uuid + "\"" + "}");
+//
+//        Log.d("typedString: ", newUser.toString());
+//
+//        remoteService.postUser(newUser, new Callback<User>() {
+//
+//            @Override
+//            public void success(User user, Response response) {
+//                Log.d("retrofit", "test success");
+//                putUserInPref(user);
+//            }
+//
+//            @Override
+//            public void failure(RetrofitError error) {
+//                Log.d("retrofit", "test failure");
+//            }
+//        });
+//    }
 
     private String getDevicesUUID() {
         TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);

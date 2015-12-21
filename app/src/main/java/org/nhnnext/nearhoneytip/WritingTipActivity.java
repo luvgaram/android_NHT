@@ -2,6 +2,7 @@ package org.nhnnext.nearhoneytip;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -48,6 +49,9 @@ public class WritingTipActivity extends AppCompatActivity implements OnPhotoSele
     private ImageView preview;
     private Menu menu;
     private ProgressDialog progressDialog;
+    private String uid;
+    private String nickname;
+    private String profilephoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,11 @@ public class WritingTipActivity extends AppCompatActivity implements OnPhotoSele
         setContentView(R.layout.activity_writing_tip);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        SharedPreferences pref = getSharedPreferences("login", MODE_PRIVATE);
+        uid = pref.getString("uuid", "");
+        nickname = pref.getString("nickname", "");
+        profilephoto = pref.getString("profilephoto", "");
 
         storeName = (EditText) findViewById(R.id.storename);
         tipDetail = (EditText) findViewById(R.id.tipdetail);
@@ -173,7 +182,14 @@ public class WritingTipActivity extends AppCompatActivity implements OnPhotoSele
 
     private void postTip(TypedFile typedFile) {
         RemoteService remoteService = ServiceGenerator.createService(RemoteService.class, RemoteService.BASE_URL);
-        remoteService.postTip(storeName.getText().toString(), tipDetail.getText().toString(), typedFile, new Callback<TipItem>() {
+        remoteService.postTip(
+                storeName.getText().toString(),
+                tipDetail.getText().toString(),
+                uid,
+                nickname,
+                profilephoto,
+                typedFile,
+                new Callback<TipItem>() {
             @Override
             public void success(TipItem tipItem, Response response) {
                 Log.d("retrofit", "upload success " + response.toString());
