@@ -40,7 +40,9 @@ public class TipItem implements Serializable {
 //        "profilephoto": "icon/profilephoto1.png",
 //        "date": "Fri Nov 13 2015 14:17:02 GMT+0900 (KST)",
 //        "area": "1",
-//        "status": "1"
+//        "status": "1",
+//        "like": ["user1", "user2"],
+//        "reply": ["4872804eb33e2e513111c3si", "4268754eb33e2e513111c5ty"]
 //      }
 //    ]
 
@@ -53,6 +55,8 @@ public class TipItem implements Serializable {
     public String profilephoto;
     public String date;
     public int status;
+    public String[] like;
+    public String[] reply;
 
     public String get_id() {
         return _id;
@@ -124,5 +128,21 @@ public class TipItem implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String[] getLike() {
+        return like;
+    }
+
+    public void setLike(String[] like) {
+        this.like = like;
+    }
+
+    public String[] getReply() {
+        return reply;
+    }
+
+    public void setReply(String[] reply) {
+        this.reply = reply;
     }
 }

@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -16,11 +15,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.nhnnext.nearhoneytip.item.User;
-import org.nhnnext.nearhoneytip.item.UserResult;
 import org.nhnnext.nearhoneytip.remote.RemoteService;
 import org.nhnnext.nearhoneytip.remote.ServiceGenerator;
-
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -79,24 +75,6 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("retrofit", "test failure");
             }
         });
-//
-//        remoteService.getUser(uuid, new Callback<List<User>>() {
-//            @Override
-//            public void success(List<User> userList, Response response) {
-//                Log.d("retrofit", "test success");
-//
-//                if (userList.isEmpty()) {
-//                    createUser(uuid);
-//                } else {
-//                    putUserInPref(userList.get(0));
-//                }
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError error) {
-//                Log.d("retrofit", "test failure");
-//            }
-//        });
     }
 
     private void putUserInPref(User user) {
@@ -109,27 +87,6 @@ public class LoginActivity extends AppCompatActivity {
 
         Log.d("pref", pref.getString("nickname", ""));
     }
-//
-//    private void createUser(String uuid) {
-//        // make a uid
-//        TypedString newUser = new TypedString("{" + "\"uid\":" + "\"" + uuid + "\"" + "}");
-//
-//        Log.d("typedString: ", newUser.toString());
-//
-//        remoteService.postUser(newUser, new Callback<User>() {
-//
-//            @Override
-//            public void success(User user, Response response) {
-//                Log.d("retrofit", "test success");
-//                putUserInPref(user);
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError error) {
-//                Log.d("retrofit", "test failure");
-//            }
-//        });
-//    }
 
     private String getDevicesUUID() {
         TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);

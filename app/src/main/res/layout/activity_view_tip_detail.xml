@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:layout_marginStart="40dp"
+            android:layout_marginStart="60dp"
             android:background="#00000000"
             android:drawablePadding="-40dp"
             android:drawableStart="@drawable/icon_like_white"

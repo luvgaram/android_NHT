@@ -14,12 +14,13 @@
     <string name="drawer_mytip">내 글 보기</string>
     <string name="drawer_setting">설정하기</string>
     <string name="temp">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</string>
+    <string name="liked">liked</string>
+    <string name="like_num">like number</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_view_tip_detail">ViewTipDetailActivity</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_main2">Main2Activity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
