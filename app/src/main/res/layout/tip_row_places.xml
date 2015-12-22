@@ -110,28 +110,30 @@
                     android:id="@+id/likeBtn"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_weight="5"
+                    android:layout_weight="6"
                     android:layout_marginStart="10dp"
                     android:background="#00000000"
                     android:drawablePadding="-10dp"
-                    android:drawableStart="@drawable/icon_like"
+                    android:drawableStart="@drawable/icon_like_off"
                     android:text="@string/button_like"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/colorPrimaryDark"
                     android:layout_marginLeft="4dp"
-                    android:focusable="false" />
+                    android:focusable="false"
+                    android:textSize="12dp" />
 
                 <Button
                     android:id="@+id/replyBtn"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_weight="6"
+                    android:layout_weight="7"
                     android:background="#00000000"
-                    android:drawablePadding="-20dp"
+                    android:drawablePadding="-16dp"
                     android:drawableStart="@drawable/icon_reply"
                     android:text="@string/button_reply"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/colorPrimaryDark" />
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="12dp" />
             </LinearLayout>
 
         </RelativeLayout>

@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private TipListAdapter tipListAdapter;
     private List<TipItem> tipItems;
+    private String uid;
     private String nickname;
     private String profilephoto;
 
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         SharedPreferences pref = getSharedPreferences("login", MODE_PRIVATE);
+        uid = pref.getString("uuid", "");
         nickname = pref.getString("nickname", "");
         profilephoto = pref.getString("profilephoto", "");
 
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setTipList() {
         tipItems = new ArrayList<>();
-        tipListAdapter = new TipListAdapter(this, tipItems);
+        tipListAdapter = new TipListAdapter(this, tipItems, uid);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.tiplist);
         StaggeredGridLayoutManager staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredLayoutManager);
