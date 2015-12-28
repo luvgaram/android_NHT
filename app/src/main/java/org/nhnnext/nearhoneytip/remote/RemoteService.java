@@ -26,7 +26,7 @@ import retrofit.mime.TypedString;
 public interface RemoteService {
     String BASE_URL = "http://54.64.250.239:3000";
 
-    //profile
+    //tips
     @GET("/tip/all")
     void getAllTips(Callback<List<TipItem>> callback);
 

@@ -1,10 +1,16 @@
 package org.nhnnext.nearhoneytip;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -13,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -45,9 +52,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String uid;
     private String nickname;
     private String profilephoto;
+    private SharedPreferences pref;
 
     public final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
-    boolean isPermissionOk = false;
+    public final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 2;
+    boolean isStorageOk = false;
+    boolean isGPSOk = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +65,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        pref = getSharedPreferences("gps", MODE_PRIVATE);
 
-        getPermission();
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            isStorageOk = true;
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            isGPSOk = true;
+        } else {
+            getGPSPermission();
+        }
+
         setFAB();
         setDrawer(toolbar);
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            isGPSOk = true;
+
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+            if (location == null) {
+                Log.d("location", "null");
+            }
+            else Log.d("location", location.getLatitude() + " : " + location.getLongitude());
+        } else {
+            getGPSPermission();
+        }
     }
 
     private void setFAB() {
@@ -66,16 +105,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (isPermissionOk) {
-                    Intent intent = new Intent(MainActivity.this, WritingTipActivity.class);
-                    startActivity(intent);
+                if (isStorageOk) {
+                    startWritingActivity();
                 } else {
                     Snackbar.make(view, "갤러리 읽기 권한을 설정해야 새 글을 쓸 수 있습니다", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
+
+                    getStoragePermission();
                 }
             }
         });
+    }
+
+    private void startWritingActivity() {
+        Intent intent = new Intent(MainActivity.this, WritingTipActivity.class);
+        startActivity(intent);
     }
 
     private void setDrawer(Toolbar toolbar) {
@@ -93,10 +137,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         nickname = pref.getString("nickname", "");
         profilephoto = pref.getString("profilephoto", "");
 
-        setNavHeader(navigationView, nickname, profilephoto);
+        setNavHeader(navigationView);
     }
 
-    private void setNavHeader(NavigationView navigationView, String nickname, String profilPhoto) {
+    private void setNavHeader(NavigationView navigationView) {
         View headerView = navigationView.getHeaderView(0);
 
         TextView navNickName = (TextView) headerView.findViewById(R.id.nickName);
@@ -108,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navNickName.setText(nickname);
     }
 
-    private void getPermission() {
+    private void getStoragePermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -127,7 +171,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
             }
-        } else isPermissionOk = true;
+        } else isStorageOk = true;
+    }
+
+    private void getGPSPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                Toast.makeText(this, "GPS를 설정해야 새 글을 쓸 수 있습니다", Toast.LENGTH_LONG).show();
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            }
+        } else isGPSOk = true;
     }
 
     @Override
@@ -135,13 +201,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                isStorageOk = ((grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED));
+                if (isStorageOk) startWritingActivity();
+                break;
 
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    isPermissionOk = true;
-
-                } else isPermissionOk = false;
+            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
+                isGPSOk = ((grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED));
                 break;
         }
     }
@@ -215,9 +282,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-            // Handle the camera action
-        } else if (id == R.id.nav_mytip) {
-
+            // Handle the profile action
         } else if (id == R.id.nav_mytip) {
 
         } else if (id == R.id.nav_setting) {
@@ -228,4 +293,60 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+//    public void showSettingAlert(){
+//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+//
+//        alertDialog.setTitle("GPS setting");
+//
+//        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+//
+//        alertDialog.setPositiveButton("Setting", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog,int which) {
+//                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                getApplicationContext().startActivity(intent);
+//            }
+//        });
+//
+//        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.cancel();
+//            }
+//        });
+//
+//        alertDialog.show();
+//    }
+
+//    private void putLocationInPref(Location location) {
+//        SharedPreferences.Editor editor = pref.edit();
+//
+//        editor.putString("latitude", location.getLatitude() + "");
+//        editor.putString("longitude", location.getLongitude() + "");
+//
+//        editor.commit();
+//    }
+
+    LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+
+            Log.d("location", "lat: " + latitude + "long: " + longitude);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
 }
