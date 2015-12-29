@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.nhnnext.nearhoneytip.item.NearTipItem;
 import org.nhnnext.nearhoneytip.item.ResponseResult;
 import org.nhnnext.nearhoneytip.item.TipItem;
 import org.nhnnext.nearhoneytip.library.ImageLib;
@@ -25,7 +26,7 @@ import retrofit.mime.TypedString;
 public class ViewTipDetailActivity extends AppCompatActivity {
 
 //    private Bundle bundle;
-    private TipItem tipItem;
+    private NearTipItem tipItem;
     private String uid;
     private RemoteService remoteService;
 
@@ -41,7 +42,7 @@ public class ViewTipDetailActivity extends AppCompatActivity {
 
         remoteService = ServiceGenerator.createService(RemoteService.class, RemoteService.BASE_URL);
 
-        tipItem = (TipItem) getIntent().getSerializableExtra("tipItem");
+        tipItem = (NearTipItem) getIntent().getSerializableExtra("tipItem");
 
         SharedPreferences pref = getSharedPreferences("login", MODE_PRIVATE);
         uid = pref.getString("uuid", "");
@@ -67,7 +68,8 @@ public class ViewTipDetailActivity extends AppCompatActivity {
 
         setBtnNums();
 
-        setLikeBtn(tipItem.getLike());
+        setLikeBtn();
+//        setLikeBtn(tipItem.getLike());
 
 
 
@@ -87,38 +89,39 @@ public class ViewTipDetailActivity extends AppCompatActivity {
 
     private void setBtnNums() {
         String btnText;
-        String[] likeList;
-        if ((likeList = tipItem.getLike()) != null) {
-            setLikeBtn(likeList);
-            likeBtn.setTag(R.string.like_num, likeList.length);
+//        String[] likeList;
+//        if ((likeList = tipItem.getLike()) != null) {
+//            setLikeBtn(likeList);
+//            likeBtn.setTag(R.string.like_num, likeList.length);
 
-            btnText = getString(R.string.button_like) + " " + likeList.length;
+        int likedNum = tipItem.getLike();
+        btnText = getString(R.string.button_like) + " " + likedNum;
+//            btnText = getString(R.string.button_like) + " " + likeList.length;
             likeBtn.setText(btnText);
-
-        }
-
-        if (tipItem.getReply() != null) {
-            btnText = getString(R.string.button_reply) + " " + tipItem.getLike().length;
-            replyBtn.setText(btnText);
-        }
+//
+//        }
+//
+//        if (tipItem.getReply() != null) {
+//            btnText = getString(R.string.button_reply) + " " + tipItem.getLike().length;
+//            replyBtn.setText(btnText);
+//        }
     }
 
-    private void setLikeBtn(String[] likeList) {
-        for (String id : likeList) {
-            if (id.equals(uid)) {
-                setLikeBtnWhenLoaded();
-                break;
-            }
+    private void setLikeBtn() {
+        if (tipItem.isliked()) {
+            likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_yellow, 0, 0, 0);
         }
     }
 
-    private void setLikeBtnWhenLoaded() {
-        likeBtn.setTag(R.string.liked, true);
-        likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_yellow, 0, 0, 0);
-    }
+//    private void setLikeBtnWhenLoaded() {
+//        likeBtn.setTag(R.string.liked, true);
+//        likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_yellow, 0, 0, 0);
+//    }
 
     private void toggleLikeBtn(String tid) {
-        if (likeBtn.getTag(R.string.liked).equals(false)) {
+//        if (likeBtn.getTag(R.string.liked).equals(false)) {
+
+        if (!tipItem.isliked()) {
             setLikeBtnOn();
 
             TypedString newLike = new TypedString("{" + "\"like\":" + "\"" + uid + "\"" + "}");
@@ -156,22 +159,32 @@ public class ViewTipDetailActivity extends AppCompatActivity {
     }
 
     public void setLikeBtnOn() {
-        likeBtn.setTag(R.string.liked, true);
+//        likeBtn.setTag(R.string.liked, true);
         likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_yellow, 0, 0, 0);
-        int likedNum = (Integer) likeBtn.getTag(R.string.like_num) + 1;
-        likeBtn.setTag(R.string.like_num, likedNum);
+//        int likedNum = (Integer) likeBtn.getTag(R.string.like_num) + 1;
+
+        int likedNum = tipItem.getLike() + 1;
+//        likeBtn.setTag(R.string.like_num, likedNum);
 
         String btnText = getString(R.string.button_like) + " " + likedNum;
         likeBtn.setText(btnText);
+
+        tipItem.setIsliked(true);
+        tipItem.setLike(likedNum);
     }
 
     public void setLikeBtnOff() {
-        likeBtn.setTag(R.string.liked, false);
+//        likeBtn.setTag(R.string.liked, false);
         likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_off, 0, 0, 0);
-        int likedNum = (Integer) likeBtn.getTag(R.string.like_num) - 1;
-        likeBtn.setTag(R.string.like_num, likedNum);
+//        int likedNum = (Integer) likeBtn.getTag(R.string.like_num) - 1;
+
+        int likedNum = tipItem.getLike() - 1;
+//        likeBtn.setTag(R.string.like_num, likedNum);
 
         String btnText = getString(R.string.button_like) + " " + likedNum;
         likeBtn.setText(btnText);
+
+        tipItem.setIsliked(false);
+        tipItem.setLike(likedNum);
     }
 }

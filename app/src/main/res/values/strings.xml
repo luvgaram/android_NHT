@@ -7,6 +7,8 @@
     <string name="action_save">저장</string>
     <string name="button_like">좋아요</string>
     <string name="button_reply">댓글</string>
+    <string name="distance">거리: </string>
+    <string name="meter">m</string>
     <string name="title_activity_writing_tip">New Honey Tip</string>
     <string name="storename_hint">상점명 </string>
     <string name="tipdetail_hint">팁 내용을 적어주세요. </string>

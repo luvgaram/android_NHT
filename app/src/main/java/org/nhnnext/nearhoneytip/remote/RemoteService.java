@@ -1,5 +1,6 @@
 package org.nhnnext.nearhoneytip.remote;
 
+import org.nhnnext.nearhoneytip.item.NearTipItem;
 import org.nhnnext.nearhoneytip.item.ResponseResult;
 import org.nhnnext.nearhoneytip.item.TipItem;
 import org.nhnnext.nearhoneytip.item.User;
@@ -34,18 +35,19 @@ public interface RemoteService {
     TipItem getTip(Callback<TipItem> callback,
                    @Path("id") String id);
 
-    //http://54.64.250.239:3000/image/icon=icon1.png
-    @GET("/image/icon={iconPath}")
-    File getIcon(@Path("iconPath") String iconPath,
-                 Callback<File> callback);
+    @GET("/tip/lat={latPath}&long={longPath}&sid={uid}")
+    void getNearTips(@Path("latPath") double latPath,
+                     @Path("longPath") double longPath,
+                     @Path("uid") String uid,
+                     Callback<List<NearTipItem>> callback);
 
     @Multipart
     @POST("/tip")
     void postTip(@Part("storename") String storename,
                  @Part("tipdetail") String tipdetail,
                  @Part("uid") String uid,
-                 @Part("nickname") String nickname,
-                 @Part("profilephoto") String profilephoto,
+                 @Part("longitude") String longitude,
+                 @Part("latitude") String latitude,
                  @Part("upload") TypedFile file,
                  Callback<TipItem> callback);
 

@@ -5,7 +5,7 @@
     android:id="@+id/placeCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="@dimen/card_margin"
     card_view:cardCornerRadius="@dimen/card_corner_radius"
     card_view:cardElevation="@dimen/card_elevation">
 
@@ -46,25 +46,44 @@
                 android:ellipsize="end" />
 
             <TextView
-                android:id="@+id/placeTipDetail"
+                android:id="@+id/placeDistance"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="18dp"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/placeStoreName"
                 android:layout_gravity="top"
+                android:gravity="right"
+                android:paddingLeft="4dp"
+                android:paddingRight="8dp"
+                android:paddingTop="2dp"
+                android:text="@string/temp"
+                android:textAppearance="?android:attr/textAppearance"
+                android:textColor="@android:color/holo_orange_dark"
+                android:textSize="12dp"
+                android:ellipsize="end"
+                android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:id="@+id/placeTipDetail"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentStart="false"
+                android:layout_below="@+id/placeDistance"
+                android:layout_gravity="top"
                 android:gravity="left"
                 android:paddingLeft="4dp"
-                android:paddingTop="8dp"
+                android:paddingTop="4dp"
                 android:text="@string/temp"
                 android:textAppearance="?android:attr/textAppearance"
                 android:textColor="@android:color/black"
                 android:textSize="14dp"
-                android:ellipsize="end" />
+                android:ellipsize="end"
+                android:paddingBottom="4dp" />
 
             <ImageView
                 android:id="@+id/placeProfilePhoto"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:layout_below="@+id/placeTipDetail"
                 android:scaleType="centerInside"
                 android:layout_marginLeft="4dp" />
@@ -72,13 +91,13 @@
             <TextView
                 android:id="@+id/placeNickName"
                 android:layout_width="match_parent"
-                android:layout_height="22dp"
+                android:layout_height="16dp"
                 android:layout_alignTop="@+id/placeProfilePhoto"
                 android:layout_gravity="top"
                 android:layout_toEndOf="@+id/placeProfilePhoto"
                 android:gravity="left"
                 android:paddingLeft="4dp"
-                android:paddingTop="8dp"
+                android:paddingTop="2dp"
                 android:text="@string/temp"
                 android:textAppearance="?android:attr/textAppearance"
                 android:textColor="@android:color/black"
@@ -87,13 +106,12 @@
             <TextView
                 android:id="@+id/placeDate"
                 android:layout_width="match_parent"
-                android:layout_height="22dp"
+                android:layout_height="16dp"
                 android:layout_below="@+id/placeNickName"
                 android:layout_gravity="top"
                 android:layout_toEndOf="@+id/placeProfilePhoto"
                 android:gravity="left"
                 android:paddingLeft="4dp"
-                android:paddingTop="6dp"
                 android:text="@string/temp"
                 android:textAppearance="?android:attr/textAppearance"
                 android:textColor="@android:color/black"
@@ -109,7 +127,7 @@
                 <Button
                     android:id="@+id/likeBtn"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="40dp"
                     android:layout_weight="6"
                     android:layout_marginStart="10dp"
                     android:background="#00000000"
@@ -125,7 +143,7 @@
                 <Button
                     android:id="@+id/replyBtn"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="40dp"
                     android:layout_weight="7"
                     android:background="#00000000"
                     android:drawablePadding="-16dp"
