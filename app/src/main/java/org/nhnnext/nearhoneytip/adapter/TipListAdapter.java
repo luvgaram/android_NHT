@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import org.nhnnext.nearhoneytip.R;
 import org.nhnnext.nearhoneytip.ViewTipDetailActivity;
+import org.nhnnext.nearhoneytip.item.NearTipItem;
 import org.nhnnext.nearhoneytip.item.ResponseResult;
 import org.nhnnext.nearhoneytip.item.TipItem;
 import org.nhnnext.nearhoneytip.item.User;
@@ -34,11 +35,11 @@ import retrofit.mime.TypedString;
 public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHolder> {
 
     private Context context;
-    private List<TipItem> tipItems;
+    private List<NearTipItem> tipItems;
     private String uid;
     private RemoteService remoteService;
 
-    public TipListAdapter(Context context, List<TipItem> tipItemList, String uid) {
+    public TipListAdapter(Context context, List<NearTipItem> tipItemList, String uid) {
         this.context = context;
         this.tipItems = tipItemList;
         this.uid = uid;
@@ -53,15 +54,21 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final TipItem tipItem = tipItems.get(position);
+        final NearTipItem tipItem = tipItems.get(position);
 
-        holder.likeBtn.setTag(R.string.liked, false);
-        holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_off, 0, 0, 0);
+//        holder.likeBtn.setTag(R.string.liked, false);
+//        holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_off, 0, 0, 0);
 
         if (tipItem.getStorename() != null) holder.placeStoreName.setText(tipItem.getStorename());
+        String distance = context.getString(R.string.distance) + " " + tipItem.getDis() + " " + context.getString(R.string.meter);
+        holder.placeDistance.setText(distance);
+
         if (tipItem.getTipdetail() != null) holder.placeTipDetail.setText(tipItem.getTipdetail());
         if (tipItem.getNickname() != null) holder.placeNickName.setText(tipItem.getNickname());
         if (tipItem.getDate() != null) holder.placeDate.setText(tipItem.getDate());
+
+        if (tipItem.isliked()) holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_on, 0, 0, 0);
+        else holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_off, 0, 0, 0);
 
         setBtnNums(holder, tipItem);
 
@@ -89,7 +96,54 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleLikeBtn(holder.likeBtn, tipItem.get_id());
+//                NearTipItem modifiedTip = toggleLikeBtn(holder.likeBtn, tipItem.get_id(), tipItem);
+//                tipItem.setIsliked(modifiedTip.isliked());
+//                tipItem.setLike(modifiedTip.getLike());
+
+                int likeNum = tipItem.getLike();
+                boolean isLiked = tipItem.isliked();
+                TypedString newLike = new TypedString("{" + "\"like\":" + "\"" + uid + "\"" + "}");
+                String tid = tipItem.get_id();
+
+                if (isLiked) {
+                    isLiked = false;
+                    likeNum--;
+
+                    remoteService.deleteLike(tid, newLike, new Callback<ResponseResult>() {
+
+                        @Override
+                        public void success(ResponseResult responseResult, Response response) {
+                            Log.d("retrofit", "test success");
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            Log.d("retrofit", "test failure");
+                        }
+                    });
+
+                } else {
+                    isLiked = true;
+                    likeNum++;
+
+                    remoteService.putLike(tid, newLike, new Callback<ResponseResult>() {
+
+                        @Override
+                        public void success(ResponseResult responseResult, Response response) {
+                            Log.d("retrofit", "test success");
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            Log.d("retrofit", "test failure");
+                        }
+                    });
+                }
+
+                tipItem.setLike(likeNum);
+                tipItem.setIsliked(isLiked);
+
+                notifyDataSetChanged();
             }
         });
         holder.replyBtn.setOnClickListener(new View.OnClickListener() {
@@ -100,36 +154,37 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
         });
     }
 
-    private void setBtnNums(ViewHolder holder, TipItem tipItem) {
+    private void setBtnNums(ViewHolder holder, NearTipItem tipItem) {
         String btnText;
-        String[] likeList;
-        if ((likeList = tipItem.getLike()) != null) {
-            setLikeBtn(holder.likeBtn, likeList);
-            holder.likeBtn.setTag(R.string.like_num, likeList.length);
+        String likeNum = tipItem.getLike() + "";
 
-            btnText = context.getString(R.string.button_like) + " " + likeList.length;
-            holder.likeBtn.setText(btnText);
+//        holder.likeBtn.setTag(R.string.like_num, likeNum);
 
-        }
-
-        if (tipItem.getReply() != null) {
-            btnText = context.getString(R.string.button_reply) + " " + tipItem.getLike().length;
-            holder.replyBtn.setText(btnText);
-        }
+        btnText = context.getString(R.string.button_like) + " " + likeNum;
+        holder.likeBtn.setText(btnText);
     }
 
-    private void setLikeBtn(Button likeBtn, String[] likeList) {
-        for (String id : likeList) {
-            if (id.equals(uid)) {
-                setLikeBtnWhenLoaded(likeBtn);
-                break;
-            }
-        }
-    }
+//        if (tipItem.getReply() != null) {
+//            btnText = context.getString(R.string.button_reply) + " " + tipItem.getLike().length;
+//            holder.replyBtn.setText(btnText);
+//        }
+//    }
+//
+//    private void setLikeBtn(Button likeBtn, String[] likeList) {
+//        for (String id : likeList) {
+//            if (id.equals(uid)) {
+//                setLikeBtnWhenLoaded(likeBtn);
+//                break;
+//            }
+//        }
+//    }
 
-    private void toggleLikeBtn(Button likeBtn, String tid) {
-        if (likeBtn.getTag(R.string.liked).equals(false)) {
-            setLikeBtnOn(likeBtn);
+    private NearTipItem toggleLikeBtn(Button likeBtn, String tid, NearTipItem tipItem) {
+        NearTipItem modifiedTip;
+
+//        if (likeBtn.getTag(R.string.liked).equals(false)) {
+        if (!tipItem.isliked()) {
+            modifiedTip = setLikeBtnOn(likeBtn, tipItem);
 
             TypedString newLike = new TypedString("{" + "\"like\":" + "\"" + uid + "\"" + "}");
 
@@ -147,7 +202,7 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
             });
 
         } else {
-            setLikeBtnOff(likeBtn);
+            modifiedTip = setLikeBtnOff(likeBtn, tipItem);
 
             TypedString newLike = new TypedString("{" + "\"like\":" + "\"" + uid + "\"" + "}");
             remoteService.deleteLike(tid, newLike, new Callback<ResponseResult>() {
@@ -163,31 +218,47 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
                 }
             });
         }
+
+        return modifiedTip;
     }
 
-    private void setLikeBtnWhenLoaded(Button likeBtn) {
-        likeBtn.setTag(R.string.liked, true);
-        likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_on, 0, 0, 0);
-    }
+//    private void setLikeBtnWhenLoaded(Button likeBtn) {
+//        likeBtn.setTag(R.string.liked, true);
+//        likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_on, 0, 0, 0);
+//    }
 
-    private void setLikeBtnOn(Button likeBtn) {
-        likeBtn.setTag(R.string.liked, true);
+    private NearTipItem setLikeBtnOn(Button likeBtn, NearTipItem tipItem) {
+//        likeBtn.setTag(R.string.liked, true);
+//        int likedNum = (Integer) likeBtn.getTag(R.string.like_num) + 1;
+//        likeBtn.setTag(R.string.like_num, likedNum);
+
         likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_on, 0, 0, 0);
-        int likedNum = (Integer) likeBtn.getTag(R.string.like_num) + 1;
-        likeBtn.setTag(R.string.like_num, likedNum);
+        int likedNum = tipItem.getLike() + 1;
 
         String btnText = context.getString(R.string.button_like) + " " + likedNum;
         likeBtn.setText(btnText);
+
+        tipItem.setIsliked(true);
+        tipItem.setLike(likedNum);
+
+        return tipItem;
     }
 
-    private void setLikeBtnOff(Button likeBtn) {
-        likeBtn.setTag(R.string.liked, false);
+    private NearTipItem setLikeBtnOff(Button likeBtn, NearTipItem tipItem) {
+//        likeBtn.setTag(R.string.liked, false);
+//        int likedNum = (Integer) likeBtn.getTag(R.string.like_num) - 1;
+//        likeBtn.setTag(R.string.like_num, likedNum);
+
         likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_like_off, 0, 0, 0);
-        int likedNum = (Integer) likeBtn.getTag(R.string.like_num) - 1;
-        likeBtn.setTag(R.string.like_num, likedNum);
+        int likedNum = tipItem.getLike() - 1;
 
         String btnText = context.getString(R.string.button_like) + " " + likedNum;
         likeBtn.setText(btnText);
+
+        tipItem.setIsliked(false);
+        tipItem.setLike(likedNum);
+
+        return tipItem;
     }
 
     @Override
@@ -198,6 +269,7 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView placeStoreName;
         public ImageView placeImageView;
+        public TextView placeDistance;
         public TextView placeTipDetail;
         public ImageView placeProfilePhoto;
         public TextView placeNickName;
@@ -210,6 +282,7 @@ public class TipListAdapter extends RecyclerView.Adapter<TipListAdapter.ViewHold
 
             placeStoreName = (TextView)itemView.findViewById(R.id.placeStoreName);
             placeImageView = (ImageView)itemView.findViewById(R.id.placeImage);
+            placeDistance = (TextView)itemView.findViewById(R.id.placeDistance);
             placeTipDetail = (TextView)itemView.findViewById(R.id.placeTipDetail);
             placeProfilePhoto = (ImageView)itemView.findViewById(R.id.placeProfilePhoto);
             placeNickName = (TextView)itemView.findViewById(R.id.placeNickName);

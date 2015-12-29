@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import org.nhnnext.nearhoneytip.R;
+import org.nhnnext.nearhoneytip.item.NearTipItem;
 import org.nhnnext.nearhoneytip.item.TipItem;
 import org.nhnnext.nearhoneytip.remote.RemoteService;
 
@@ -19,6 +20,23 @@ public class ImageLib {
 
     public ImageLib(Context context) {
         this.context = context;
+    }
+
+    public void setPhotoThumbnail(ImageView imageView, NearTipItem tipItem) {
+
+        String imagePath = tipItem.getFile()[0].getPath();
+
+        if (imagePath != null) {
+            imagePath = imagePath.replaceAll("data/", "");
+
+            Picasso.with(context)
+                    .load(RemoteService.BASE_URL + "/image/photo=" + imagePath)
+                    .fit()
+                    .centerCrop()
+                    .into(imageView);
+        } else {
+            imageView.setBackgroundResource(R.drawable.nht_logo);
+        }
     }
 
     public void setPhotoThumbnail(ImageView imageView, TipItem tipItem) {

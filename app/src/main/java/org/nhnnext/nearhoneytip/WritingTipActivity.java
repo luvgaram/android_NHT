@@ -50,8 +50,8 @@ public class WritingTipActivity extends AppCompatActivity implements OnPhotoSele
     private Menu menu;
     private ProgressDialog progressDialog;
     private String uid;
-    private String nickname;
-    private String profilephoto;
+    private String longitude;
+    private String latitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +62,8 @@ public class WritingTipActivity extends AppCompatActivity implements OnPhotoSele
 
         SharedPreferences pref = getSharedPreferences("login", MODE_PRIVATE);
         uid = pref.getString("uuid", "");
-        nickname = pref.getString("nickname", "");
-        profilephoto = pref.getString("profilephoto", "");
+        longitude = pref.getString("longitude", "");
+        latitude = pref.getString("latitude", "");
 
         storeName = (EditText) findViewById(R.id.storename);
         tipDetail = (EditText) findViewById(R.id.tipdetail);
@@ -186,8 +186,8 @@ public class WritingTipActivity extends AppCompatActivity implements OnPhotoSele
                 storeName.getText().toString(),
                 tipDetail.getText().toString(),
                 uid,
-                nickname,
-                profilephoto,
+                longitude,
+                latitude,
                 typedFile,
                 new Callback<TipItem>() {
             @Override

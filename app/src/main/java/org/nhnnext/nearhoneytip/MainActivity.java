@@ -1,7 +1,6 @@
 package org.nhnnext.nearhoneytip;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -36,6 +35,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.nhnnext.nearhoneytip.adapter.TipListAdapter;
+import org.nhnnext.nearhoneytip.item.NearTipItem;
 import org.nhnnext.nearhoneytip.item.TipItem;
 import org.nhnnext.nearhoneytip.library.ImageLib;
 import org.nhnnext.nearhoneytip.remote.RemoteService;
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private TipListAdapter tipListAdapter;
-    private List<TipItem> tipItems;
+    private List<NearTipItem> tipItems;
     private String uid;
     private String nickname;
     private String profilephoto;
@@ -72,7 +72,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        pref = getSharedPreferences("gps", MODE_PRIVATE);
+        pref = getSharedPreferences("login", MODE_PRIVATE);
+
+        setDrawer(toolbar);
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -120,7 +122,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         setFAB();
-        setDrawer(toolbar);
     }
 
     private void setFAB() {
@@ -241,33 +242,33 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
     }
 
-    private void setTipList() {
-        tipItems = new ArrayList<>();
-        tipListAdapter = new TipListAdapter(this, tipItems, uid);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.tiplist);
-        StaggeredGridLayoutManager staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(staggeredLayoutManager);
-        recyclerView.setAdapter(tipListAdapter);
-
-        RemoteService remoteService = ServiceGenerator.createService(RemoteService.class, RemoteService.BASE_URL);
-        remoteService.getAllTips(new Callback<List<TipItem>>() {
-            @Override
-            public void success(List<TipItem> tipItem, Response response) {
-                Log.d("retrofit", "test success");
-
-                for (TipItem tip : tipItem) {
-                    tipItems.add(0, tip);
-                }
-
-                tipListAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("retrofit", "test failure");
-            }
-        });
-    }
+//    private void setTipList() {
+//        tipItems = new ArrayList<>();
+//        tipListAdapter = new TipListAdapter(this, tipItems, uid);
+//        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.tiplist);
+//        StaggeredGridLayoutManager staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+//        recyclerView.setLayoutManager(staggeredLayoutManager);
+//        recyclerView.setAdapter(tipListAdapter);
+//
+//        RemoteService remoteService = ServiceGenerator.createService(RemoteService.class, RemoteService.BASE_URL);
+//        remoteService.getAllTips(new Callback<List<TipItem>>() {
+//            @Override
+//            public void success(List<TipItem> tipItem, Response response) {
+//                Log.d("retrofit", "test success");
+//
+//                for (TipItem tip : tipItem) {
+//                    tipItems.add(0, tip);
+//                }
+//
+//                tipListAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void failure(RetrofitError error) {
+//                Log.d("retrofit", "test failure");
+//            }
+//        });
+//    }
 
     @Override
     public void onBackPressed() {
@@ -319,6 +320,8 @@ public class MainActivity extends AppCompatActivity
 
         Log.d("location", "Request fusedLocation");
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+
+
     }
 
     @Override
@@ -329,7 +332,50 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
         Log.d("location", "lat: " + location.getLatitude() + "long: " + location.getLongitude());
+        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        setTipList(location);
+        putLocationInPref(location);
+    }
 
+    private void putLocationInPref(Location location) {
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString("latitude", location.getLatitude() + "");
+        editor.putString("longitude", location.getLongitude() + "");
+
+        editor.commit();
+    }
+
+    private void setTipList(Location location) {
+        tipItems = new ArrayList<>();
+        tipListAdapter = new TipListAdapter(this, tipItems, uid);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.tiplist);
+        StaggeredGridLayoutManager staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(staggeredLayoutManager);
+        recyclerView.setAdapter(tipListAdapter);
+
+        RemoteService remoteService = ServiceGenerator.createService(RemoteService.class, RemoteService.BASE_URL);
+        remoteService.getNearTips(
+                location.getLatitude(),
+                location.getLongitude(),
+                uid,
+                new Callback<List<NearTipItem>>() {
+            @Override
+            public void success(List<NearTipItem> tipItem, Response response) {
+                Log.d("retrofit", "test success");
+
+                for (NearTipItem tip : tipItem) {
+                    tipItems.add(tip);
+                }
+
+                tipListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("retrofit", "test failure");
+            }
+        });
     }
 
     @Override
@@ -371,16 +417,7 @@ public class MainActivity extends AppCompatActivity
 //
 //        alertDialog.show();
 //    }
-
-//    private void putLocationInPref(Location location) {
-//        SharedPreferences.Editor editor = pref.edit();
 //
-//        editor.putString("latitude", location.getLatitude() + "");
-//        editor.putString("longitude", location.getLongitude() + "");
-//
-//        editor.commit();
-//    }
-
 //    LocationListener locationListener = new LocationListener() {
 //        public void onLocationChanged(Location location) {
 //            double latitude = location.getLatitude();
